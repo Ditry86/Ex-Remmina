@@ -613,3 +613,18 @@ endif()
 if(WITH_TRANSLATIONS)
   add_subdirectory(po)
 endif()
+
+cmake_minimum_required(VERSION 3.10)
+
+# 1. Ensure the project name is set
+project(Ex-Remmina VERSION 1.0.0)
+
+# ... your build targets, add_executable, install rules, etc. ...
+
+# 2. Configure CPack variables before including the module
+set(CPACK_PACKAGE_NAME "ex-remmina")
+set(CPACK_PACKAGE_VENDOR "My Company")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Fixed remmina")
+
+# 3. Include the CPack module (Must be at the very bottom)
+include(CPack)
