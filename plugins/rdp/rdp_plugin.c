@@ -2413,11 +2413,17 @@ static gboolean remmina_rdp_main(RemminaProtocolWidget *gp)
 		 * heap out-of-bounds read and a crash in freerdp_connect(). */
 		RDPDR_DEVICE *sdev;
 		if (sn != NULL && sn[0] != '\0') {
-			const char *args[] = { "smartcard", sn };
-			sdev = freerdp_device_new(RDPDR_DTYP_SMARTCARD, 2, args);
-		} else {
-			const char *args[] = { "smartcard" };
+			/* The first argument becomes RDPDR_DEVICE::Name, which the
+			 * smartcard channel uses as a reader-name filter
+			 * (smartcard_call_context_add() -> filter_device_by_name_w()).
+			 * Pass only the requested reader name here, never the literal
+			 * "smartcard" keyword: that would filter out every real reader
+			 * whose name does not contain the substring "smartcard". */
+			const char *args[] = { sn };
 			sdev = freerdp_device_new(RDPDR_DTYP_SMARTCARD, 1, args);
+		} else {
+			/* No filter: redirect all readers (same as xfreerdp /smartcard). */
+			sdev = freerdp_device_new(RDPDR_DTYP_SMARTCARD, 0, NULL);
 		}
 
 		if (!sdev) {
